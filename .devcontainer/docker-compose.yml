@@ -1,0 +1,12 @@
+services:
+  npm-nostrify-publisher-dev:
+    image: npm-nostrify-publisher-dev
+    container_name: npm-nostrify-publisher-dev
+    build:
+      context: ../.
+      dockerfile: ./.devcontainer/Dockerfile
+    working_dir: /npm-nostrify-publisher
+    volumes:
+      - ..:/npm-nostrify-publisher:cached
+    tty: true
+

@@ -1,0 +1,19 @@
+{
+  "name": "Npm Nostrify Publisher Dev",
+  "dockerComposeFile": [
+    "docker-compose.yml"
+  ],
+  "service": "npm-nostrify-publisher-dev",
+  "workspaceFolder": "/npm-nostrify-publisher",
+  "postCreateCommand": "./.devcontainer/auth.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "eamodio.gitlens",
+        "manishsencha.readme-preview",
+        "Maarti.jenkins-doc",
+        "johnpapa.winteriscoming"
+      ]
+    }
+  }
+}
