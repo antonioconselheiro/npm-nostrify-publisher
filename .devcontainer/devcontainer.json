@@ -12,7 +12,8 @@
         "eamodio.gitlens",
         "manishsencha.readme-preview",
         "Maarti.jenkins-doc",
-        "johnpapa.winteriscoming"
+        "johnpapa.winteriscoming",
+        "ms-azuretools.vscode-docker"
       ]
     }
   }
