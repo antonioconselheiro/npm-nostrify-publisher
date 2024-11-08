@@ -71,73 +71,39 @@ RUN echo '\n\
 }\n\
 ' > ./tsconfig.json
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
-    && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" \
-    && [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" \
-    && . $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default \
-    && npm install typescript -g \
-    && (tsc --project tsconfig.json > tsbuild.log || exit 0)
-
 RUN echo '{\n\
-"type": "module",\n\
-"name": "@belomonte/nostrify",\n\
-"version": "",\n\
-"description": "Framework for Nostr on Deno and web. 🛸",\n\
-"repository": {\n\
-  "type": "git",\n\
-  "url": "https://gitlab.com/soapbox-pub/nostrify"\n\
-},\n\
-"files": [\n\
-  "lib"\n\
-],\n\
-"sideEffects": false,\n\
-"module": "./esm/mod.js",\n\
-"main": "./cjs/mod.js",\n\
-"types": "./types/mod.d.ts",\n\
-"exports": {\n\
-  ".": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
+  "type": "module",\n\
+  "name": "@belomonte/nostrify",\n\
+  "description": "Framework for Nostr on Deno and web. 🛸",\n\
+  "repository": {\n\
+    "type": "git",\n\
+    "url": "https://gitlab.com/soapbox-pub/nostrify"\n\
   },\n\
-  "./db": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
-  },\n\
-  "./denokv": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
-  },\n\
-  "./nostrify": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
-  },\n\
-  "./policies": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
-  },\n\
-  "./types": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
-  },\n\
-  "./welshman": {\n\
-    "import": "./esm/mod.js",\n\
-    "require": "./cjs/mod.js",\n\
-    "types": "./types/mod.d.ts"\n\
+  "files": [\n\
+    "lib"\n\
+  ],\n\
+  "sideEffects": false,\n\
+  "module": "./esm/mod.js",\n\
+  "main": "./cjs/mod.js",\n\
+  "types": "./types/mod.d.ts",\n\
+  "license": "LICENSE",\n\
+  "peerDependencies": {\n\
+    "nostr-tools": ">=2.7.0"\n\
   }\n\
-},\n\
-"license": "LICENSE",\n\
-"peerDependencies": {\n\
-  "nostr-tools": ">=2.7.0"\n\
-}\n\
-}' | jq --slurp --arg version $(cat ./dist/package.json.version) '.version = $version' > ./dist/package.json
+}' > ./package.json
+
+RUN VERSION=$(npm show @belomonte/nostrify version 2>/dev/null || echo "")
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
+  && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" \
+  && [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" \
+  && . $NVM_DIR/nvm.sh \
+  && nvm install $NODE_VERSION \
+  && nvm alias default $NODE_VERSION \
+  && nvm use default \
+  && npm install typescript semver -g \
+  && (tsc --project tsconfig.json > tsbuild.log || exit 0)
+
+RUN mv package.json LICENSE ./dist
 
 CMD [ "/bin/bash" ]
