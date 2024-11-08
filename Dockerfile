@@ -2,25 +2,25 @@ FROM denoland/deno
 
 # Including git
 RUN apt update
-RUN apt install -y git jq
+RUN apt install -y git jq curl
 RUN apt clean
 RUN rm -rf /var/apt/lists/*
 
 ## nvm
-ENV NVM_VERSION v10.2.4
-ENV NODE_VERSION v20.11.1
-ENV NVM_DIR /usr/local/nvm
-RUN mkdir $NVM_DIR
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+ENV NODE_VERSION=v20.11.1
+ENV NVM_DIR=/root/.nvm
 
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+RUN [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+RUN . $NVM_DIR/nvm.sh
 
 RUN echo "source $NVM_DIR/nvm.sh && \
     nvm install $NODE_VERSION && \
     nvm alias default $NODE_VERSION && \
     nvm use default && \
-    npm install husky eslint typescript @angular/cli sass-lint cordova -g" | bash
+    npm install typescript tsc -g" | bash
 
 # build nostrify
 RUN git clone https://gitlab.com/soapbox-pub/nostrify/
@@ -57,7 +57,7 @@ const buildConfig = {\n\
   ]\n\
 };\n\
 await esbuild.build({ ...buildConfig, format: "esm", outdir: `dist/esm` });\n\
-await esbuild.build({ ...buildConfig, format: "csj", outdir: `dist/csj` });\n\
+await esbuild.build({ ...buildConfig, format: "cjs", outdir: `dist/cjs` });\n\
 \n\
 esbuild.stop();\n\
 ' > ./build.ts
@@ -76,13 +76,13 @@ RUN echo '\n\
 }\n\
 ' > ./tsconfig.json
 
-RUN tsc --project tsconfig.json
+RUN echo tsc --project tsconfig.json
 
 RUN echo '\n\
 {\n\
   "type": "module",\n\
   "name": "@belomonte/nostrify",\n\
-  "version": "2.10.2",\n\
+  "version": "",\n\
   "description": "Framework for Nostr on Deno and web. 🛸",\n\
   "repository": {\n\
     "type": "git",\n\

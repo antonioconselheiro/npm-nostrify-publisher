@@ -2,7 +2,7 @@ FROM denoland/deno
 
 # Including git
 RUN apt update
-RUN apt install -y git
+RUN apt install -y git jq
 RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
